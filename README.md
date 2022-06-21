@@ -46,3 +46,4 @@
     - `branch_name = smc-exercise1/LAST_NAME+FIRST_NAME`
     - For example: `branch_name = smc-exercise1/QuangTran`
 - Please submit your code to [https://github.com/bdemy-lab/LearnSC-Execerise1](https://github.com/bdemy-lab/LearnSC-Execerise1)
+- Due Date: `July 16th, 2022`
