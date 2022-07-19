@@ -56,7 +56,7 @@ contract MultiSender {
     }
 
     /**
-     * @dev Transfer ERC20 token to multi sender
+     * @dev Transfer ERC20 token to multi recipients
      * Emit an {Transfer} event when transferred success
      *
      * @param token address of ERC20 contract
@@ -101,7 +101,7 @@ contract MultiSender {
     }
 
     /**
-     * @dev Transfer ERC721 token to multi sender
+     * @dev Transfer ERC721 token to multi recipients
      * Emit an {Transfer} event when transferred success
      *
      * @param token address of ERC721 contract
