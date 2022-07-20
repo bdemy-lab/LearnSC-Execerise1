@@ -56,7 +56,7 @@ contract MultiSender {
     }
 
     /**
-     * @dev Transfer ERC20 token to multi recipients
+     * @dev Transfer ERC20 token to multi sender
      * Emit an {Transfer} event when transferred success
      *
      * @param token address of ERC20 contract
@@ -71,13 +71,29 @@ contract MultiSender {
         require(recipients.length > 0, "Recipients is empty");
         require(
             recipients.length == amounts.length,
-            "Recipients not match token ids"
+            "Recipients not match amounts"
         );
 
         address from = msg.sender;
         IERC20 erc20 = IERC20(token);
-        uint256 allowance = erc20.allowance(from, address(this));
         uint256 totalAmount = 0;
+        uint256 allowance = 0;
+        uint256 balance = 0;
+
+        // get allownce
+        try erc20.allowance(from, address(this)) returns (uint256 amount) {
+            allowance = amount;
+            console.log("Allowance: ", allowance);
+        } catch Error(string memory reason) {
+            console.log("Error: ", reason);
+        }
+
+        // get sender balance
+        try erc20.balanceOf(from) returns (uint256 amount) {
+            balance = amount;
+        } catch Error(string memory reason) {
+            console.log("Error: ", reason);
+        }
 
         // calculate total amount
         for (uint256 i = 0; i < amounts.length; i++) {
@@ -85,8 +101,9 @@ contract MultiSender {
             totalAmount = totalAmount.add(amounts[i]);
         }
 
-        // check allowance at least total amount
-        require(totalAmount <= allowance, "Not enough amount");
+        // check allowance and balance at least total amount
+        require(totalAmount <= allowance, "Not enough allowance");
+        require(totalAmount <= balance, "Not enough balance");
 
         // send
         for (uint256 i = 0; i < recipients.length; i++) {
@@ -101,7 +118,7 @@ contract MultiSender {
     }
 
     /**
-     * @dev Transfer ERC721 token to multi recipients
+     * @dev Transfer ERC721 token to multi sender
      * Emit an {Transfer} event when transferred success
      *
      * @param token address of ERC721 contract
