@@ -72,18 +72,6 @@ describe("multiSender", function () {
     await erc721Contract.deployed();
   });
 
-  it("test new function", async function () {
-    multiSenderContract = multiSenderContract.connect(tokenOwner);
-    await expect(
-      multiSenderContract.multisender(
-        "0x0000000000000000000000000000000000000000",
-        ["0x0000000000000000000000000000000000000000"],
-        ["1"],
-        ["1"]
-      )
-    ).to.be.reverted;
-  });
-
   it("mint", async function () {
     console.log("minting erc20");
     await erc20Contract.mint(tokenOwner.address, 9999);
@@ -153,10 +141,9 @@ describe("multiSender", function () {
 
     //send to multi-address
 
-    await multiSenderContract.multisender(
+    await multiSenderContract.sendERC20(
       erc20Contract.address,
       receiver,
-      [],
       amountArrayFail
     );
 
@@ -206,10 +193,8 @@ describe("multiSender", function () {
 
     let balanceOfSenderBefore = await tokenOwner.getBalance();
 
-    let estimateGas = await multiSenderContract.estimateGas.multisender(
-      "0x0000000000000000000000000000000000000000",
+    let estimateGas = await multiSenderContract.estimateGas.sendEther(
       receiver,
-      [],
       amountArrayFail,
       {
         value: BigNumber.from(totalSendValue),
@@ -237,16 +222,10 @@ describe("multiSender", function () {
       );
     }
 
-    await multiSenderContract.multisender(
-      "0x0000000000000000000000000000000000000000",
-      receiver,
-      [],
-      amountArrayFail,
-      {
-        value: BigNumber.from(totalSendValue),
-        // gasLimit: estimateGas,
-      }
-    );
+    await multiSenderContract.sendEther(receiver, amountArrayFail, {
+      value: BigNumber.from(totalSendValue),
+      // gasLimit: estimateGas,
+    });
 
     console.log("ETH(wei) balance of receivers AFTER send:");
     for (let index = 0; index < RECEIVERS.length; index++) {
@@ -310,11 +289,10 @@ describe("multiSender", function () {
       );
     }
 
-    await multiSenderContract.multisender(
+    await multiSenderContract.sendERC721(
       erc721Contract.address,
       receivers,
-      tokenIds,
-      []
+      tokenIds
     );
 
     console.log("NFT balance of receivers AFTER send:");
